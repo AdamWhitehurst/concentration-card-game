@@ -25,7 +25,9 @@ const withDeck = Component => {
     }
 
     function setResetCards(idOne, idtwo, matched = false) {
+      // No more revealed card
       setRevealedCard(null);
+      // Delay unflipping to show user the cards they flipped
       setTimeout(() => {
         if (matched) awardPlayer();
         else setFailCount(failCount + 1);
@@ -40,22 +42,27 @@ const withDeck = Component => {
         });
         setStalled(false);
         setCards(newCards);
-      }, 1000);
+      }, 750);
     }
 
     function revealCard(c) {
+      // Prevent unwanted flips
       if (stalled || c.revealed === true || c.matched === true) return;
 
       if (!revealedCard) {
+        // First card being flipped, save it
         setRevealedCard(c);
       } else if (revealedCard.code !== c.code) {
+        // Second card flipped but no match
         setStalled(true);
         setResetCards(revealedCard.id, c.id);
       } else {
+        // Second card flipped and a match
         setStalled(true);
         setResetCards(revealedCard.id, c.id, true);
       }
 
+      // Update deck of cards
       const newCards = cards.map(card => {
         if (card.id !== c.id) return card;
         return {
